@@ -45,6 +45,7 @@ resource "google_cloud_run_service_iam_binding" "binding" {
   members  = ["serviceAccount:${google_service_account.sa.email}"]
 }
 
+# Didn't execute this
 #Allow Pub/Sub to create authentication tokens in your project
 #resource "google_project_service_identity" "pubsub_agent" {
 #  provider = google-beta
@@ -56,9 +57,12 @@ resource "google_cloud_run_service_iam_binding" "binding" {
 #  role    = "roles/iam.serviceAccountTokenCreator"
 #  members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
 #}
+# or use command lines:
+# gcloud projects describe PROJECT_ID --format="value(projectNumber)"
 #gcloud projects add-iam-policy-binding august-water-417802 \
-#   --member=cloud-run-pubsub-invoker@august-water-417802.iam.gserviceaccount.com \
+#   --member=service-159287021335@gcp-sa-pubsub.iam.gserviceaccount.com \
 #   --role=roles/iam.serviceAccountTokenCreator
+
 
 #Create a Pub/Sub subscription with the service account
 #[cyee] service account will be used to subscribe the topic and push message to cloud run service
