@@ -68,12 +68,12 @@ resource "google_cloud_run_service_iam_binding" "binding" {
 #[cyee] create a pubsub service with token creator role
 resource "google_project_service_identity" "pubsub_agent" {
   provider = google-beta
-  project  = data.google_project.project.project_id
+  project  = "august-water-417802"
   service  = "pubsub.googleapis.com"
 }
 
 resource "google_project_iam_binding" "project_token_creator" {
-  project = data.google_project.project.project_id
+  project = "august-water-417802"
   role    = "roles/iam.serviceAccountTokenCreator"
   members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
 }
