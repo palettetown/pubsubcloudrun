@@ -46,7 +46,6 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-central1-docker.pkg.dev/august-water-417802/my-docker-repo/pubsubserv-image:latest" # Replace with newly created image gcr.io/<project_id>/pubsub
     }
   }
-  depends_on = [google_project_service.cloudrun_api]
 }
 
 #Create or select a service account to represent the Pub/Sub subscription identity.
