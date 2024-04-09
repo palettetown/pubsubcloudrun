@@ -14,30 +14,12 @@ provider "google" {
   #credentials = file("C:\\MyPrograms\\GCP\\my-second-project-418213-c4584d61b2a8.json")
 }
 
-# Task 2: Create Docker repository in GCP Artifact Registry
-#resource "google_artifact_registry_repository" "docker_repo" {
-#  provider      = google
-#  project       = "august-water-417802"
-#  location      = "us-central1"
-#  repository_id = "my-docker-repo"
-#  format        = "DOCKER"
-#}
-
-# Task 3: Create Docker image and upload to the Docker repository
-#resource "google_cloudbuild_trigger" "build_trigger" {
-#  name        = "docker-image-build-trigger"
-#  description = "Trigger to build and push Docker image to Artifact Registry"
-#  trigger_template {
-#    repo_name   = google_artifact_registry_repository.docker_repo.name
-#    branch_name = "main"
-#  }
-#  filename = "cloudbuild.yaml"
-#}
-
+#Create a topic
 resource "google_pubsub_topic" "default" {
   name = "pubsub_topic"
 }
 
+#Create cloud run service with image referenced
 resource "google_cloud_run_v2_service" "default" {
   name     = "pubsub-tutorial"
   location = "us-central1"
@@ -64,20 +46,22 @@ resource "google_cloud_run_service_iam_binding" "binding" {
 }
 
 #Allow Pub/Sub to create authentication tokens in your project
-#[cyee] create a pubsub service with token creator role
-resource "google_project_service_identity" "pubsub_agent" {
-  provider = google-beta
-  project  = "august-water-417802"
-  service  = "pubsub.googleapis.com"
-}
-
-resource "google_project_iam_binding" "project_token_creator" {
-  project = "august-water-417802"
-  role    = "roles/iam.serviceAccountTokenCreator"
-  members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
-}
+#resource "google_project_service_identity" "pubsub_agent" {
+#  provider = google-beta
+#  project  = "august-water-417802"
+#  service  = "pubsub.googleapis.com"
+#}
+#resource "google_project_iam_binding" "project_token_creator" {
+#  project = "august-water-417802"
+#  role    = "roles/iam.serviceAccountTokenCreator"
+#  members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
+#}
+#gcloud projects add-iam-policy-binding august-water-417802 \
+#   --member=cloud-run-pubsub-invoker@august-water-417802.iam.gserviceaccount.com \
+#   --role=roles/iam.serviceAccountTokenCreator
 
 #Create a Pub/Sub subscription with the service account
+#[cyee] service account will be used to subscribe the topic and push message to cloud run service
 resource "google_pubsub_subscription" "subscription" {
   name  = "pubsub_subscription"
   topic = google_pubsub_topic.default.name
